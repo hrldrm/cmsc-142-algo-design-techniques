@@ -9,5 +9,5 @@ Collection of problems each solved by an algorithm design technique
 7. Minimax Algorithm (Alpha-Beta Pruning)
 
 _Made for:_ **CMSC 142 (Design and Analysis of Algorithms)** <br/>
-FS AY 2018-2019 <br/>
-University of the Philippines Manila
+FS A.Y. 2018-2019 <br/>
+University of the Philippines-Manila
