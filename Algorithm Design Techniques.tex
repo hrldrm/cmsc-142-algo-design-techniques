@@ -1,0 +1,729 @@
+\documentclass[12pt]{article}%
+\usepackage{amsfonts}
+\usepackage{fancyhdr}
+\usepackage{comment}
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2.2cm, right=2.2cm]%
+{geometry}
+\usepackage{times}
+\usepackage{amsmath, mathtools}
+\usepackage{changepage}
+\usepackage{amssymb}
+\usepackage{graphicx}%
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\usepackage[backend=biber,style=ieee]{biblatex}
+
+\usepackage{tikz}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\addbibresource{Algorithm Design Techniques.bib}
+
+\begin{document}
+
+\title{CMSC 142 Homework}
+\author{Harold R. Mansilla (2015-46170)}
+\date{\today}
+\maketitle
+
+Give an example of a problem that can be solved by the following algorithm design techniques.
+\hspace{5mm}
+\begin{enumerate}
+  \item Divide and conquer
+  \item Greedy
+  \item Dynamic Programming
+  \item Backtracking
+  \item Sieve
+  \item Branch and Bound
+  \item $\alpha-\beta$ Pruning
+\end{enumerate}
+
+Indicate the input and the required output in each problem and the algorithm that solves the problem. Find the space and time complexity of the algorithm. Indicate the source of each (e.g. URL, bibliographic citation)
+
+\newpage
+
+\section{Divide and conquer}
+  \subsection{Problem}
+    \hspace{5mm}Merge Sort
+  \subsection{Input}
+    \begin{itemize}
+      \item $arr$ - list to be sorted 
+      \item $l$ - last index of array/sub-array to be sorted 
+      \item $f$ - first index of array/sub-array to be sorted 
+    \end{itemize}
+  \subsection{Output}
+    \begin{itemize}
+      \item $arr$ - sorted list
+    \end{itemize}
+  \subsection{Algorithm \cite{gfg_merge_sort}}
+  \begin{algorithm}
+			\caption{Merge Sort Algorithm}\label{merge-sort}
+			\begin{algorithmic}[1]
+			\Function{mergeSort}{arr[n], l, r}
+				\State int m = l+(r-l)/2; 
+        \State mergeSort(arr, l, m); 
+        
+        \State mergeSort(arr, m+1, r); 
+        \State merge(arr, l, m, r);
+			\EndFunction
+			\end{algorithmic}
+  \end{algorithm}
+  
+  \begin{algorithm}[H]
+			\caption{Merge Algorithm}\label{merge}
+			\begin{algorithmic}[1]
+			\Function{merge}{A[n], l, m, r}
+        \State int i, j, k
+        \State int n1 = m - l + 1
+        \State int n2 =  r - m
+  
+        \State int L[n1], R[n2]; 
+        \For{$i \gets 0$ to $n1 - 1$}
+          \State L[i] = arr[l + i]
+        \EndFor
+        \For{$j \gets 0$ to $n2 - 1$} 
+          \State R[j] = arr[m + 1+ j]
+        \EndFor
+  
+        \State i = 0;
+        \State j = 0;
+        \State k = l;
+        \While{$i < n1$ \textbf{and} $j < n2$}
+          \If{$L[i] <= R[j]$}
+            \State arr[k] = L[i]
+            \State i++
+          \Else 
+           \State arr[k] = R[j]
+            \State j++
+          \EndIf 
+        \EndWhile
+        \While{$i < n1$}
+          \State arr[k] = L[i]
+          \State i++
+          \State k++
+        \EndWhile
+        \While{$j < n2$}
+          \State arr[k] = R[j]
+          \State j++ 
+          \State k++ 
+        \EndWhile
+			\EndFunction
+			\end{algorithmic}
+	\end{algorithm}
+  \subsection{Time Complexity}
+    Let $T(n)$ be the time complexity of performing merge sort in a list of $n$ elements.
+      \begin{align*}
+        T(n) &= \text{cost of sequence} \\
+        &= \circled{2} + \circled{3} + \circled{4} + \circled{5} \\
+        &= O(1) + T\left(\frac{n}{2}\right) + T\left(\frac{n}{2}\right) + \circled{5} \\
+        \circled{5} &= \text{cost of performing merge on array with $n$ elements} \\
+        \circled{5} &= O(n) \\
+        T(n) &= O(1) + T\left(\frac{n}{2}\right) + T\left(\frac{n}{2}\right) + O(n) \\
+        T(n) &= 2 T\left(\frac{n}{2}\right) + O(n) \\
+        \Aboxed{T(n) &= O(nlgn)} \text{\hspace{2mm}(by master method)}
+      \end{align*}
+  \subsection{Space Complexity}
+      Let $S(n)$ be the space complexity of performing merge sort
+      \begin{table}[H]
+      \centering
+      \begin{tabular}{|c|c|}
+      \hline
+      \textbf{Variable} & \textbf{Size} \\ \hline
+      A[n]              & n             \\ \hline
+      l                 & 1             \\ \hline
+      r                 & 1             \\ \hline
+      m                 & 1             \\ \hline
+      \end{tabular}
+      \end{table}
+
+      \begin{align*}
+        S(n) &= n + 1 + 1 + 1 \\
+        &= O(n) + O(1) + O(1) + O(1) \\
+        \Aboxed{S(n) &= O(n)}
+      \end{align*}
+\newpage
+
+\section{Greedy}
+  \subsection{Problem}
+      Coin Changing Problem 
+  \subsection{Input}
+      \begin{itemize}
+        \item $A$ - the amount to be converted
+        \item $D$ - array containing the denominations available
+      \end{itemize}
+  \subsection{Output}
+      \begin{itemize}
+        \item $S$ - array containing the number of coins per denomination
+      \end{itemize}
+  \subsection{Algorithm}
+      \begin{algorithm}
+			\caption{Coin Changing Problem Algorithm}\label{ccp}
+			\begin{algorithmic}[1]
+			\Function{CCP}{A, D}
+        \State i = 1
+        \Repeat
+          \State curr = max(D) 
+          \State $n_i$ = A \textit{div} curr
+          \State S = $S \cup n_i$
+          \State A = $A - n_i curr$
+          \State D = $D - \left\{curr\right\}$
+          \State i++ 
+        \Until{$A == 0$}
+			\EndFunction
+			\end{algorithmic}
+  \end{algorithm}
+  \subsection{Time Complexity}
+    Let $T(k)$ be the time complexity of the CCP algorithm with k denominations 
+    \begin{align*}
+      T(k) &= \text{cost of sequence} \\ 
+      &= \circled{2} + \circled{3-10} \\
+      \circled{2} &= O(1) \\
+      \circled{3-10} &= \text{number of iterations} * \text{cost of body of loop} \\ 
+      \text{cost of body of loop} &= \circled{4} + \circled{5} + \circled{6} + \circled{7} + \circled{8} + \circled{9} \\
+      &= O(k) + O(1) + O(1) + O(1) + O(1) + O(1) \\
+      \text{cost of body of loop} &= O(k)
+    \end{align*}
+    Note that the WCTC occurs when all denominations are used (i.e. by after $k$th denomination, $A$ will then be equal to $0$), therefore:
+    \begin{align}
+      \Aboxed{T(k) = O(k)}
+    \end{align}
+  \subsection{Space Complexity}
+    Let $S(n)$ be the space complexity of solving the coin changing problem
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Variable} & \textbf{Size}          \\ \hline
+    A                 & 1                      \\ \hline
+    D                 & k                      \\ \hline
+    S                 & k                      \\ \hline
+    i                 & 1                      \\ \hline
+    $n_i$             & 1                      \\ \hline
+    curr              & 1                      \\ \hline
+    \end{tabular}
+    \end{table}
+    \begin{align}
+      S(n) &= 1 + k + k + 1 + 1 + 1 \\
+      &= O(1) + O(2k) + 1 + 1 + 1 \\
+      \Aboxed{S(n) &= O(2k)}
+    \end{align}
+
+    \newpage
+
+\section{Dynamic Programming}
+  \subsection{Problem}
+    Newton Forward Difference Table
+  \subsection{Input}
+    \begin{itemize}
+      \item $x[m]$ - array containing $x$-values of the given $m$ interpolating points (where $m = n + 1$)
+      \item $y[m]$ - array containing $y$-values of the given $m$ interpolating points (where $m = n + 1$)
+    \end{itemize}
+  \subsection{Output}
+    \begin{itemize}
+      \item $F[m][m]$ - forward difference table
+    \end{itemize}
+  \subsection{Algorithm \cite{gfg_nfd}}
+      \begin{algorithm}
+        \caption{Newton Forward Difference Table Algorithm}\label{nfd}
+        \begin{algorithmic}[1]
+        \Function{NFD}{x[m], y[m]}
+          \State F = Array[m][m]
+          \For{$i \gets 0$ to $m - 1$}
+            \State F[i][0] = y[i] \Comment Populate first column with the y-values
+          \EndFor
+          \For{$j \gets 1$ to $m - 1$}
+            \For{$k \gets 0$ to $m - j - 1$}
+              \State F[k][j] = F[k + 1][j - 1] - F[k][j - 1]
+            \EndFor
+          \EndFor
+          \State \Return F
+        \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+  \subsection{Time Complexity}
+      Let $T(n)$ be the time complexity in computing the Newton Forward Difference table.
+      \begin{align*}
+        T(n) &= \text{cost of sequence} \\
+        &= \circled{2} + \circled{3-5} + \circled{6-10} + \circled{11}
+      \end{align*}
+      Computing at the cost of \circled{2}
+      \begin{align*}
+        \circled{2} &= O(1)
+      \end{align*}
+      Computing the cost of \circled{3-5}
+      \begin{align*}
+        \circled{3-5} &= \text{no. of iterations} * \circled{4} \\
+        \circled{4} &= O(1) \\
+        \circled{3-5} &= (m - 1) * O(1) \\
+        &= O(m - 1) \\ 
+      \end{align*}
+      Computing the cost of \circled{6-10}
+      \begin{align*}
+        \circled{6-10} &= \text{no. of iterations} * \circled{7-9} \\
+        \circled{7-9} &= \text{no. of iterations} * \circled{8}
+      \end{align*}
+      Note that at the maximum value of $j$, $m - j - 1 = 0$ (which will get the value $\triangle^n f(a)$, or in this case: $\triangle^{m-1} f(a)$). The maximum value $k$ can take is when $j = 1$, or $max(k) = m - 2$. \\
+
+      Therefore
+      \begin{align*}
+        \circled{7-9} &= (m - 2) * \circled{8} \\ 
+        &= (m - 2) * (1) \\ 
+        &= O(m - 2)
+      \end{align*}
+
+      Now to get the cost of \circled{6-10}
+      \begin{align*}
+        \circled{6-10} &= \text{no. of iterations} * O(m - 2) \\
+        &= (m-1) * O(m - 2) \\
+        &= O(m^2 - 3m + 2)
+      \end{align*}
+
+      Computing the cost of \circled{11}
+      \begin{align*}
+        \circled{11} = O(1)
+      \end{align*}
+
+      Substituting the values into $T(n)$ 
+      \begin{align*}
+        T(n) &= O(1) + O(m - 1) + O(m^2 - 3m + 2) \\
+        \Aboxed{T(n) &= O(m^2)}
+      \end{align*}
+  \subsection{Space Complexity}
+      Let $S(n)$ be the space complexity in computing the Newton Forward Difference table.
+      \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Variable} & \textbf{Size} \\ \hline
+        x                 & $m$           \\ \hline
+        y                 & $m$           \\ \hline
+        F                 & $m^2$         \\ \hline
+        i                 & 1             \\ \hline
+        j                 & 1             \\ \hline
+        k                 & 1             \\ \hline
+        \end{tabular}
+      \end{table}
+      \begin{align*}
+        S(n) &= m + m + m^2 + 1 + 1 + 1 \\
+        &= O(m) + O(m) + O(m^2) + O(1) + O(1) + O(1) \\
+        \Aboxed{S(n) &= O(m^2)}
+      \end{align*}
+\newpage
+
+\section{Backtracking}
+  \subsection{Problem}
+    N Queens
+  \subsection{Input}
+    \begin{itemize}
+      \item $board$ - the $N$x$N$ chess board, assume to be initialized to all $0$'s 
+      \item $col$ - the current column where the queen will be placed
+    \end{itemize}
+  \subsection{Output}
+    \begin{itemize}
+      \item $board$ - the board containing a solution to the N-Queens problem 
+    \end{itemize}
+  \subsection{Algorithm \cite{gfg_nq}}
+    \begin{algorithm}
+        \caption{N Queens Algorithm}\label{nq}
+        \begin{algorithmic}[1]
+        \Function{NQ}{board[N][N], col}
+            \If{col \textgreater= N}
+              \State \Return true
+            \EndIf 
+            \For{$i \gets 0$ to $N - 1$}
+              \If{isSafe(board, i, col)}
+                \State board[i][col] = 1
+                \If{NQ(board, col + 1)}
+                  \State \Return true 
+                \EndIf 
+                \State board[i][col] = 0
+              \EndIf
+            \EndFor
+            \State \Return false
+        \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+
+    \begin{algorithm}[H]
+        \caption{Utility function to check if current queen placement can be attacked/can attack previously placed queens}\label{is}
+        \begin{algorithmic}[1]
+        \Function{isSafe}{board[N][N], row, col}
+            \State int i, j 
+            \For{$i \gets 0$ to $col - 1$} \Comment Row on left side
+              \If{board[row][i] == 1}
+                \State \Return false
+              \EndIf
+            \EndFor
+
+            \For{$i \gets row$, $j \gets col$ to $0$,$0$} \Comment Upper diagonal on left side
+              \If{board[row][i] == 1}
+                \State \Return false
+              \EndIf
+            \EndFor
+
+            \For{$i \gets row$,$j \gets col$ to $N - 1$,$0$} \Comment Lower diagonal on left side 
+              \If{board[row][i] == 1}
+                \State \Return false
+              \EndIf
+            \EndFor
+        \EndFunction
+        \end{algorithmic}
+      \end{algorithm}
+  \subsection{Time Complexity}
+      Let $T(n)$ be the time complexity for solving the N Queens problem.
+      \begin{align*}
+        T(n) &= \text{cost of sequence} \\
+        &= \circled{2-4} + \circled{5-13} + \circled{14} \\ 
+      \end{align*}
+      Computing the cost of $\circled{2-4}$
+      \begin{align*}
+        \circled{2-4} &= max(\circled{2}, \circled{4}) \\
+        &= max(O(1),O(1)) \\
+        &= O(1)
+      \end{align*}
+      Computing the cost of $\circled{5-13}$
+      \begin{align*}
+        \circled{5-13} &= \text{no. of iterations} * \circled{6-12} \\
+         &= N * \circled{6-12}
+      \end{align*}
+      Computing the cost of $\circled{6-12}$
+      \begin{align*}
+        \circled{6-12} = max(\circled{6}, \circled{7-11})
+      \end{align*}
+      Computing the cost of $\circled{6}$ is equivalent to finding the time complexity of the \textit{isSafe} algorithm.
+      \begin{align*}
+        % Side note: I got really lazy typesetting the computation of this part so here's the answer. Assume that we are at the N-1th column to get the maximum number of times we iterate over this 2-dimensional array checking if queens are present
+        \circled{6} = O(N - 1) 
+      \end{align*}
+      Computing the cost of $\circled{7-11}$
+      \begin{align*}
+        \circled{7-11} &= \circled{7} + \circled{8-10} + \circled{11} \\
+        &= O(1) + max(\circled{8}, \circled{9}) + O(1) \\
+        &= O(1) + max(T(N - i), O(1)) \\
+        &= O(1) + T(N - i) \\
+        &= T(N - i)
+      \end{align*}
+      We can now get $\circled{6-12}$
+      \begin{align*}
+        \circled{6-12} &= max(O(N - 1), T(N - i)) \\
+        &= T(N - i)
+      \end{align*}
+      Now, we get \circled{5-13}
+      \begin{align*}
+        \circled{5-13} = N * T(N - i)
+      \end{align*}
+      Computing the cost of \circled{14}
+      \begin{align*}
+        \circled{14} = O(1)
+      \end{align*}
+      We can now compute for $T(n)$
+      \begin{align*}
+        T(n) &= O(1) + N * T(N - i) + O(1) \\
+        &= N*T(N - i)
+      \end{align*}
+      Here, we note that the maximum value of $N - i$ (for the sake of computation) is $N - 1$.
+      \begin{align*}
+        T(n) &= N*T(N - 1) \\
+        \Aboxed{T(n) &= O(n^n)}
+      \end{align*}
+  \subsection{Space Complexity}
+      Let $S(n)$ be the space complexity for solving the N Queens problem.
+      \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Variable} & \textbf{Size} \\ \hline
+        board             & $N^2$         \\ \hline
+        col               & 1             \\ \hline
+        i                 & 1             \\ \hline
+        \end{tabular}
+      \end{table}
+      \begin{align*}
+        S(n) &= N^2 + 1 + 1 \\
+        &= O(N^2) + O(1) + O(1) \\
+        \Aboxed{S(n) &= O(N^2)} 
+      \end{align*}
+\newpage
+
+\section{Sieve}
+  \subsection{Problem}
+    Sieve of Eratosthenes
+  \subsection{Input}
+    \begin{itemize}
+      \item $n$ - user-supplied input wherein the prime numbers will be computed from 0 to $n$
+    \end{itemize}
+  \subsection{Output}
+    \begin{itemize}
+      \item prime[n + 1] - boolean array containing the prime numbers from 0 to $n$
+    \end{itemize}
+  \subsection{Algorithm \cite{gfg_soe}}
+    \begin{algorithm}[H]
+        \caption{Sieve of Eratosthenes Algorithm}\label{soe}
+        \begin{algorithmic}[1]
+        \Function{Sieve}{n}
+          \State prime = Array[n + 1] 
+          \For{$i \gets 0$ to $n$}
+            \State prime[i] = true
+          \EndFor 
+          \State p = 2
+          \While{$p^2 <= n$}
+            \If{prime[p] == true}
+              \For{$i \gets p^2$ to $n$; $i += p$}
+                \State prime[i] = false
+              \EndFor
+            \EndIf
+            \State $p++$
+          \EndWhile 
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
+  \subsection{Time Complexity}
+    \begin{quotation}
+      The inner loop does $dfrac{n}{i}$ steps, where $i$ is prime. The whole	complexity is $\sum{\dfrac{n}{i}} = n*\sum{\dfrac{1}{i}}$. According to prime harmonic series, $\sum{1/i}$ where $i$ is prime is $\log{(log{n})}$. In total, $O(n \log{(\log{n})})$.
+    \end{quotation}
+    \begin{align*}
+      \Aboxed{T(n) &= O(n \log{(\log{n})})}
+    \end{align*}
+  \subsection{Space Complexity}
+    Let $S(n)$ be the space complexity of solving the Sieve of Eratosthenes algorithm.
+    \begin{table}[]
+      \centering
+      \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Variable} & \textbf{Size} \\ \hline
+        n                 & 1             \\ \hline
+        prime             & n+1           \\ \hline
+        p                 & 1             \\ \hline
+      \end{tabular}
+    \end{table}
+    \begin{align*}
+      S(n) &= 1 + (n + 1) + 1 \\  
+      &= O(1) + O(n + 1) + O(1) \\
+      &= O(n + 1) \\
+      \Aboxed{S(n) &= O(n)}
+    \end{align*}
+
+\newpage
+
+\section{Branch and Bound}
+  \subsection{Problem}
+    $0/1$ Knapsack problem
+  \subsection{Input}
+      \begin{itemize}
+        \item $W$ - the weight capacity of the knapsack
+        \item arr[] - array containing the items. Each element of the array consists of the price/value and its weight 
+        \item $n$ - size of the array
+      \end{itemize}
+  \subsection{Output}
+      \begin{itemize}
+        \item maxProfit - the maximum profit that can be derived from the items 
+      \end{itemize}
+  \subsection{Algorithm \cite{gfg_ks}}
+    \begin{algorithm}[H]
+        \caption{Comparison function to sort items by value/weight ratio}\label{cmp}
+        \begin{algorithmic}[1]
+        \Function{cmp}{a, b}
+          \State r1 = a.value / a.weight; 
+          \State r2 = b.value / b.weight; 
+          \State return r1 $>$ r2; 
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
+    \begin{algorithm}[H]
+        \caption{Bound function to compute the maximum profit bound of a subtree rooted in $u$}\label{bnd}
+        \begin{algorithmic}[1]
+          \Function{bound}{u, n, W, arr[]}
+            \If{u.weight $>$= W}
+              \State \Return 0
+            \EndIf
+            \State profit-bound = u.profit
+            \State j = u.level + 1
+            \State totweight = u.weight
+            \While{j $<$ n \textbf{and} totweight + arr[j].weight <= W}
+              \State totweight    += arr[j].weight
+              \State profit-bound += arr[j].value
+              \State j++
+            \EndWhile 
+            \If{j $<$ n} 
+                \State profit-bound += (W - totweight) * arr[j].value / arr[j].weight
+            \EndIf
+            \State \Return profit-bound
+          \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+    \begin{algorithm}[H]
+        \caption{0/1 Knapsack Problem Algorithm}\label{ks}
+        \begin{algorithmic}[1]
+        \Function{Knapsack}{W, arr[], n}
+          \State sort(arr, arr + n, cmp)
+          \State queue\textless Node\textgreater Q 
+          \State Node u, v 
+          \State u.level = -1
+          \State u.profit = u.weight = 0
+          \State Q.enqueue(u)
+          \State maxProfit = 0
+          \While{!Q.empty()}
+            \State u = Q.front()
+            \State Q.dequeue()
+            \If{u.level == -1}
+              \State v.level = 0
+            \EndIf
+            \If{u.level == n-1}
+              \State \textbf{continue}
+            \EndIf
+            \State v.level = u.level + 1 
+            \State v.weight = u.weight + arr[v.level].weight 
+            \State v.profit = u.profit + arr[v.level].value 
+            \If{v.weight \textless= W \textbf{and} v.profit $>$ maxProfit}
+              \State maxProfit = v.profit
+            \EndIf
+            \State v.bound = bound(v,n,W,arr)
+            \If{v.bound $>$ maxProfit}
+              \State Q.enqueue(v)
+            \EndIf
+            \State v.weight = u.weight
+            \State v.profit = u.profit 
+            \State v.bound = bound(v,n,W,arr)
+            \If{v.bound $>$ maxProfit}
+              \State Q.push(v)
+            \EndIf
+          \EndWhile 
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
+  \subsection{Time Complexity}
+    Let $T(n)$ be the time complexity of solving the 0/1 Knapsack problem using branch and bound. \\ 
+    We assume that $T(n) =\circled{9-34}$ as the preceding statements only take constant time except for the sorting of the array which depends on the sorting algorithm used as well as the comparison function. \\ 
+
+    \begin{align*}
+      \Aboxed{T(n) = O(2^n)}
+    \end{align*}
+  \subsection{Space Complexity}
+    Let $S(n)$ be the space complexity of solving the 0/1 Knapsack problem using branch and bound. 
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Variable} & \textbf{Size} \\ \hline
+    W                 & 1             \\ \hline
+    arr               & n             \\ \hline
+    Q                 & n             \\ \hline
+    u                 & 1             \\ \hline
+    v                 & 1             \\ \hline
+    \end{tabular}
+    \end{table}
+    \begin{align*}
+      S(n) &= 1 + n + n + 1 + 1 \\
+      \Aboxed{S(n) &= O(n)} \\
+    \end{align*}
+
+\newpage
+
+\section{$\alpha-\beta$ Pruning}
+  \subsection{Problem}
+    Minimax Algorithm
+  \subsection{Input}
+    \begin{itemize}
+      \item node - current node in the game tree
+      \item depth - current depth in the game tree 
+      \item isMaximizingPlayer - boolean value that verifies whether the player is the maximizing player or otherwise
+      \item $\alpha$ - the best value the \textit{maximizer} can have at a node level in the game tree
+      \item $\beta$ - the best value the \textit{minimizer} can have at a node level in the game tree
+    \end{itemize}
+  \subsection{Output}
+    \begin{itemize}
+      \item bestVal - the best value to be taken by the player at the call of the function 
+    \end{itemize}
+  \subsection{Algorithm \cite{gfg_ab}}
+    \begin{algorithm}[H]
+        \caption{$\alpha - \beta$ pruning technique for the Minimax algorithm}\label{cmp}
+        \begin{algorithmic}[1]
+        \Function{minimax}{node, depth, isMaximizingPlayer, $\alpha$, $\beta$}
+          \If{node is a leaf node}
+            \State \Return node.value 
+          \EndIf
+          \If{isMaximizingPlayer}
+            \State bestVal = $-\infty$
+            \For{\textbf{each} child node}
+              \State value = minimax(node, depth + 1, false, $\alpha$, $\beta$)
+              \State bestVal = max(bestVal, value) 
+              \State alpha = max(alpha, bestVal)
+              \If{$\beta <= \alpha$}
+                \State \textbf{break}
+              \EndIf 
+            \EndFor
+            \State \Return bestVal
+          \Else 
+              \State bestVal = $\infty$
+              \For{\textbf{each} child node}
+                \State value = minimax(node, depth + 1, true, $\alpha$, $\beta$)
+                \State bestVal = min(bestVal, value) 
+                \State beta = min(alpha, bestVal)
+                \If{$\beta <= \alpha$}
+                  \State \textbf{break}
+                \EndIf 
+              \EndFor
+              \State \Return bestVal
+          \EndIf
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
+  \subsection{Time Complexity \cite{cis}}
+    Let $T(n)$ be the time complexity for using the $\alpha - \beta$ pruning technique for the minimax algorithm. Let $b$ be the number of child nodes of a node. Let $d$ be the depth of the tree. We assume that all non-leaf nodes have $b$ children. 
+    \begin{align*}
+      T(n) &= \text{cost of sequence} \\ 
+      &= \circled{2-4} + \circled{5-27}
+    \end{align*}
+    Computing for the cost of $\circled{2-4}$
+    \begin{align*}
+      \circled{2-4} &= max(\circled{2}, \circled{3}) \\ 
+      &= max(O(1), O(1)) \\ 
+      \circled{2-4} &= O(1)
+    \end{align*}
+    Computing the cost of \circled{5-27}
+    \begin{align*}
+      \circled{5-27} &= max(\circled{5}, \circled{6-15}, \circled{17-26}) 
+    \end{align*}
+    Note here that the costs of $\circled{6-15}$ and $\circled{17-26}$ are equal assuming that we are considering the same initial game tree (at the first call of the function) and the only difference is whether the player is the maximizing or minimizing player. 
+    \begin{align*}
+      \circled{6-15} &= \circled{6} + \circled{7-14} + \circled{15} = \circled{17-26} \\
+      &= O(1) + \text{no. of iterations} * \circled{8-13} + O(1) \\ 
+      &= O(1) + b * \circled{8-13} + O(1) \\ 
+    \end{align*}
+    Computing the cost of $\circled{8-13}$
+    \begin{align*}
+      \circled{8-13} &= \circled{8} + \circled{9} + \circled{10} + max(\circled{11}, \circled{12}) \\
+      &= T() + O(1) + O(1) + max(O(1),O(1)) \\ 
+      &= T() + O(1) + O(1) + O(1)
+    \end{align*}
+    \begin{align*}
+      \Aboxed{T(n) &= O(b^{\frac{d}{2}})}
+    \end{align*}
+  \subsection{Space Complexity \cite{cis}}
+    Let $S(n)$ be the space complexity for using the $\alpha - \beta$ pruning technique in the Minimax algorithm. Let $b$ be the number of child nodes of a node. Let $d$ be the depth of the tree. 
+    \begin{table}[]
+      \centering
+      \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Variable}  & \textbf{Size} \\ \hline
+        node               & bd            \\ \hline
+        depth              & 1             \\ \hline
+        isMaximizingPlayer & 1             \\ \hline
+        $\alpha$           & 1             \\ \hline
+        $\beta$            & 1             \\ \hline
+        bestVal            & 1             \\ \hline
+      \end{tabular}
+    \end{table}
+    \begin{align}
+      S(n) &= bd + 1 + 1 + 1 + 1 + 1 \\
+      &= O(bd) + O(1) + O(1) + O(1) + O(1) + O(1) \\
+      \Aboxed{S(n) &= O(bd)}
+    \end{align}
+  \newpage
+
+\printbibliography[heading=bibintoc,title={Bibliography}]
+\end{document}
