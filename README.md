@@ -8,6 +8,6 @@ Collection of problems each solved by an algorithm design technique
 6. 0/1 Knapsack Problem (Branch and Bound)
 7. Minimax Algorithm (Alpha-Beta Pruning)
 
-_Made for:_ **CMSC 142 (Design and Analysis of Algorithms)**
-1st Semester AY 2018-2019
-University of the Philippines Manila
+_Made for:_ **CMSC 142 (Design and Analysis of Algorithms)** <br/>
+FS A.Y. 2018-2019 <br/>
+University of the Philippines-Manila
